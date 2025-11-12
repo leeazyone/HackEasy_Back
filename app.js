@@ -1,0 +1,29 @@
+//서버 진입점
+require('dotenv').config()
+const express = require('express')
+const cors =require('cors')
+const authRouter = require('./routes/auth')
+const session = require('./config/session') //세션 설정파일
+const cookieParser = require('cookie-parser')
+
+const app = express()
+
+//CORS 설정
+app.use(cors({
+  origin: 'http://localhost:5173', //프론트가 5173포트
+  credentials: true, //쿠키 전송 허용
+}))
+app.use(cookieParser())
+app.use(express.json()) //json 바디 파서
+app.use(express.urlencoded({ extended: true }));//폼 파서
+app.use(session) // 세션 미들웨어, session.js 설정을 서버에 적용
+
+//인증 라우터
+app.use('/auth', authRouter)
+
+app.get('/',(req,res)=>{
+  res.send('HackEasy server running')
+})
+
+const port = parseInt(process.env.PORT || '3000', 10)
+app.listen(port,()=> console.log(`Server running on ${port}`))
