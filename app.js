@@ -9,10 +9,22 @@ const cookieParser = require('cookie-parser')
 const app = express()
 
 //CORS 설정
+const allowedOrigins = [
+  'http://localhost:5173',                 // 로컬 개발용
+  'https://hack-easy-front.vercel.app',    // Vercel 프론트
+  'http://hackeasy.store',
+  'https://hackeasy.store',
+];
+
 app.use(cors({
-  origin: 'http://localhost:5173', //프론트가 5173포트
-  credentials: true, //쿠키 전송 허용
-}))
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+}));
 app.use(cookieParser())
 app.use(express.json()) //json 바디 파서
 app.use(express.urlencoded({ extended: true }));//폼 파서
