@@ -9,10 +9,17 @@ const store= new MySQLStore({
     database: process.env.DB_NAME,
 })
 
-module.exports = session({
-    secret: process.env.SESS_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store,
-})
+const isProd = process.env.NODE_ENV === 'production'
 
+module.exports = session({
+  secret: process.env.SESS_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store,
+  cookie: {
+    httpOnly: true,                     // JS에서 쿠키 직접 못 건드리게
+    maxAge: 1000 * 60 * 60 * 24,        // 1일 (원하면 조절)
+    secure: isProd,                     // 배포(HTTPS)에서만 true
+    sameSite: isProd ? 'none' : 'lax',  // 배포에서 cross-site 허용
+  },
+})

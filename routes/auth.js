@@ -4,7 +4,7 @@ const router = express.Router()
 
 const bcrypt = require('bcrypt')
 const pool = require('../config/db')
-
+const authRequired = require('../middleware/authRequired')
 
 //회원가입
 router.post('/signup', async(req, res)=>{
@@ -79,6 +79,58 @@ router.post('/logout', (req, res)=>{
     res.clearCookie('connect.sid')
     res.json({ok:true})
   })
+})
+
+// 마이페이지 - 내 프로필 조회
+router.get('/me', authRequired, async (req, res) => {
+  try {
+    const userId = req.session.user?.id
+
+    if (!userId) {
+      return res.status(401).json({ msg: "로그인이 필요합니다." })
+    }
+
+    const [rows] = await pool.query(
+      'SELECT id, user_id, nickname FROM users WHERE id = ?',
+      [userId]
+    )
+
+    if (!rows.length) {
+      return res.status(404).json({ msg: "사용자를 찾을 수 없습니다." })
+    }
+
+    const user = rows[0]
+
+/**  🔽🔽🔽   푼 문제/점수 통계 임시 비활성화   🔽🔽🔽
+
+// 푼 문제/점수 통계
+const [statRows] = await pool.query(
+  `
+  SELECT 
+    COUNT(us.id) AS solvedCount,
+    COALESCE(SUM(c.score), 0) AS totalScore
+  FROM user_solved us
+  JOIN challenges c ON us.challenge_id = c.id
+  WHERE us.user_id = ?
+  `,
+  [userId]
+)
+
+const stats = statRows[0] || { solvedCount: 0, totalScore: 0 }
+
+🔼🔼🔼  여기까지 주석  🔼🔼🔼 **/
+    res.json({
+      user: {
+        id: user.id,
+        user_id: user.user_id,
+        nickname: user.nickname,
+      },
+      stats,   // 👈 프론트에서 stats.solvedCount / stats.totalScore 사용
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ msg: "서버 오류" })
+  }
 })
 
 module.exports = router
