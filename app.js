@@ -14,6 +14,7 @@ const allowedOrigins = [
   'https://hack-easy-front.vercel.app',    // Vercel 프론트
   'http://hackeasy.store',
   'https://hackeasy.store',
+  'https://www.hackeasy.store',
 ];
 
 app.use(cors({
