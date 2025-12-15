@@ -5,6 +5,9 @@ const cors =require('cors')
 const authRouter = require('./routes/auth')
 const session = require('./config/session') //세션 설정파일
 const cookieParser = require('cookie-parser')
+const challengesRouter = require('./routes/challenges')
+const { installChallenges } = require('./challenges')
+
 
 const app = express()
 
@@ -33,6 +36,12 @@ app.use(session) // 세션 미들웨어, session.js 설정을 서버에 적용
 
 //인증 라우터
 app.use('/auth', authRouter)
+
+// CTF 문제 목록/제출 API
+app.use('/api/challenges', challengesRouter)
+
+// 문제에 필요한 추가 라우트(robots.txt, 숨겨진 페이지 등) 설치
+installChallenges(app)
 
 app.get('/',(req,res)=>{
   res.send('HackEasy server running')

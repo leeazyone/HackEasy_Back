@@ -9,6 +9,7 @@ const store= new MySQLStore({
     database: process.env.DB_NAME,
 })
 
+<<<<<<< HEAD
 const isProd = process.env.NODE_ENV === 'production'
 
 module.exports = session({
@@ -23,3 +24,12 @@ module.exports = session({
     sameSite: isProd ? 'none' : 'lax',  // 배포에서 cross-site 허용
   },
 })
+=======
+module.exports = session({
+    secret: process.env.SESS_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store,
+})
+
+>>>>>>> bf993bc (c1 make)
