@@ -16,6 +16,7 @@ module.exports = session({
   resave: false,
   saveUninitialized: false,
   store,
+  proxy: true,
   cookie: {
     httpOnly: true,                     // JS에서 쿠키 접근 차단
     maxAge: 1000 * 60 * 60 * 24,        // 1일

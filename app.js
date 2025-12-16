@@ -31,6 +31,7 @@ app.use(cors({
 app.use(cookieParser())
 app.use(express.json()) //json 바디 파서
 app.use(express.urlencoded({ extended: true }));//폼 파서
+app.set('trust proxy', 1);
 app.use(session) // 세션 미들웨어, session.js 설정을 서버에 적용
 
 //인증 라우터
