@@ -6,7 +6,7 @@ const authRouter = require('./routes/auth')
 const session = require('./config/session') //세션 설정파일
 const cookieParser = require('cookie-parser')
 const challengesRouter = require('./routes/challenges')
-
+const { installChallenges } = require('./challenges')
 
 const app = express()
 
@@ -38,6 +38,8 @@ app.use('/auth', authRouter)
 
 // CTF 문제 목록/제출 API
 app.use('/api/challenges', challengesRouter)
+
+installChallenges(app)
 
 
 app.get('/',(req,res)=>{
