@@ -1,4 +1,4 @@
-const { verifyFlag } = require('../utils/flag')
+const { verifyFlag, hmac } = require('../utils/flag')
 
 module.exports = {
   id: 'c1',
@@ -25,16 +25,21 @@ module.exports = {
 
   // ✅ 플래그 검증 로직 (HMAC)
   check({ flag }) {
-    const answerHmac = process.env.C1_ANSWER_HMAC
-    if (!answerHmac) {
+    const answerHmacRaw = process.env.C1_ANSWER_HMAC
+    if (!answerHmacRaw) {
       return { ok: false, message: 'Answer not configured' }
     }
 
-    const ok = verifyFlag(flag, answerHmac)
+    const submitted = String(flag || '').trim()
+    const answerHmac = String(answerHmacRaw).trim()
+
+    const ok = verifyFlag(submitted, answerHmac)
+
     if (!ok) {
-      return { ok: false, message: 'Wrong flag' }
+      return { ok: false, message: 'Wrong!' }
     }
 
     return { ok: true, message: 'Correct!' }
   },
 }
+
